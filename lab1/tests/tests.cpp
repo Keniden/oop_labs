@@ -1,36 +1,36 @@
 #include <gtest/gtest.h>
 #include "../src/Remove_vowel.cpp"
 
-TEST(TestSet, basic_test_set)
+TEST(TestSet, basic_test_set_01)
 {
     ASSERT_TRUE(Remove_vowel("This website is for losers LOL!") == "Ths wbst s fr lsrs LL!");
 }
 
-TEST(TestSet, basic_test_set)
+TEST(TestSet, basic_test_set_02)
 {
     ASSERT_TRUE(Remove_vowel("") == "");
 }
 
-TEST(TestSet, basic_test_set)
+TEST(TestSet, basic_test_set_03)
 {
     ASSERT_TRUE(Remove_vowel("aeiouAEaIOU") == "");
 }
 
-TEST(TestSet, basic_test_set)
+TEST(TestSet, basic_test_set_04)
 {
     ASSERT_TRUE(Remove_vowel("bcdfghjklmnpqrstvwxyz") == "bcdfghjklmnpqrstvwxyz");
 }
-TEST(TestSet, basic_test_set)
+TEST(TestSet, basic_test_set_05)
 {
     ASSERT_TRUE(Remove_vowel("12345!@#$%1231235") == "12345!@#$%1231235");
 }
 
-TEST(TestSet, basic_test_set)
+TEST(TestSet, basic_test_set_06)
 {
     ASSERT_TRUE(Remove_vowel("AaaAAAeeeEEEiiiIIIoooOOOuuuUUU") == "");
 }
 
-TEST(TestSet, basic_test_set)
+TEST(TestSet, basic_test_set_07)
 {
     ASSERT_TRUE(Remove_vowel("ZVZVZVZVZVzombii") == "ZVZVZVZVZVzmb");
 }
