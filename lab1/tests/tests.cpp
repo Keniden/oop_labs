@@ -1,40 +1,65 @@
 #include <gtest/gtest.h>
 #include "../src/Remove_vowel.cpp"
 
-TEST(TestSet, basic_test_set_01)
+TEST(TestSet, CorrectRemoveVowel)
 {
-    ASSERT_TRUE(Remove_vowel("This website is for losers LOL!") == "Ths wbst s fr lsrs LL!");
+    // arrange
+    std::string input = "This website is for losers LOL!";
+    // act
+    std::string result = Remove_vowel(input);
+    // assert
+    ASSERT_TRUE(result == "Ths wbst s fr lsrs LL!");
 }
 
-TEST(TestSet, basic_test_set_02)
+TEST(TestSet, EmptyString)
 {
-    ASSERT_TRUE(Remove_vowel("") == "");
+    // arrange
+    std::string input = "";
+    // act
+    std::string result = Remove_vowel(input);
+    // assert
+    ASSERT_TRUE(result == "");
 }
 
-TEST(TestSet, basic_test_set_03)
+TEST(TestSet, AllVowels)
 {
-    ASSERT_TRUE(Remove_vowel("aeiouAEaIOU") == "");
+    // arrange
+    std::string input = "aeiouAEaIOU";
+    // act
+    std::string result = Remove_vowel(input);
+    // assert
+    ASSERT_TRUE(result == "");
 }
 
-TEST(TestSet, basic_test_set_04)
+TEST(TestSet, NoVowels)
 {
-    ASSERT_TRUE(Remove_vowel("bcdfghjklmnpqrstvwxyz") == "bcdfghjklmnpqrstvwxyz");
-}
-TEST(TestSet, basic_test_set_05)
-{
-    ASSERT_TRUE(Remove_vowel("12345!@#$%1231235") == "12345!@#$%1231235");
-}
-
-TEST(TestSet, basic_test_set_06)
-{
-    ASSERT_TRUE(Remove_vowel("AaaAAAeeeEEEiiiIIIoooOOOuuuUUU") == "");
+    // arrange
+    std::string input = "bcdfghjklmnpqrstvwxyz";
+    // act
+    std::string result = Remove_vowel(input);
+    // assert
+    ASSERT_TRUE(result == "bcdfghjklmnpqrstvwxyz");
 }
 
-TEST(TestSet, basic_test_set_07)
+TEST(TestSet, NumbersAndSymbols)
 {
-    ASSERT_TRUE(Remove_vowel("ZVZVZVZVZVzombii") == "ZVZVZVZVZVzmb");
+    // arrange
+    std::string input = "12345!@#$%1231235";
+    // act
+    std::string result = Remove_vowel(input);
+    // assert
+    ASSERT_TRUE(result == "12345!@#$%1231235");
 }
 
+TEST(TestSet, UpperLowerVowels)
+{
+    // arrange
+    std::string input = "AaaAAAeeeEEEiiiIIIoooOOOuuuUUU";
+    // act
+    std::string result = Remove_vowel(input);
+    // assert
+    ASSERT_TRUE(result == "");
+}
 
 int main(int argc, char **argv)
 {
