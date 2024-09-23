@@ -16,7 +16,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(tests tests/tests.cpp)
+add_executable(tests test_remove_vowel.cpp)
 
 
 target_link_libraries(tests gtest gtest_main)
