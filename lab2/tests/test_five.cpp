@@ -20,9 +20,9 @@ TEST(Test, ConstructorWithInitializerList)
     unsigned char *data = five.getData();
 
     EXPECT_EQ(size, 3);
-    EXPECT_EQ(data[0], 1);
+    EXPECT_EQ(data[0], 3);
     EXPECT_EQ(data[1], 2);
-    EXPECT_EQ(data[2], 3);
+    EXPECT_EQ(data[2], 1);
 }
 
 TEST(Test, ConstructorWithString)
@@ -32,9 +32,9 @@ TEST(Test, ConstructorWithString)
     Five five(value);
 
     EXPECT_EQ(five.getSize(), 3);
-    EXPECT_EQ(five.getData()[0], 1);
+    EXPECT_EQ(five.getData()[0], 3);
     EXPECT_EQ(five.getData()[1], 2);
-    EXPECT_EQ(five.getData()[2], 3);
+    EXPECT_EQ(five.getData()[2], 1);
 }
 
 TEST(Test, CopyConstructor)
@@ -59,13 +59,14 @@ TEST(Test, MoveConstructor)
 
 TEST(Test, AdditionOperator)
 {
-    Five five1 = {2, 3};
+    Five five1 = {2, 3, 4};
     Five five2 = {1, 1};
     Five result = five1 + five2;
 
-    EXPECT_EQ(result.getSize(), 2);
-    EXPECT_EQ(result.getData()[0], 3); // (2 + 1) % 5 = 3
-    EXPECT_EQ(result.getData()[1], 4); // (3 + 1) % 5 = 4
+    EXPECT_EQ(result.getSize(), 3);
+    EXPECT_EQ(result.getData()[0], 0);
+    EXPECT_EQ(result.getData()[1], 0);
+    EXPECT_EQ(result.getData()[2], 3);
 }
 
 TEST(Test, SubtractionOperator)
@@ -77,8 +78,8 @@ TEST(Test, SubtractionOperator)
     Five result = five1 - five2;
 
     EXPECT_EQ(result.getSize(), 2);
-    EXPECT_EQ(result.getData()[0], 3); // 4 - 1 = 3
-    EXPECT_EQ(result.getData()[1], 2); // 3 - 1 = 2
+    EXPECT_EQ(result.getData()[0], 2); // 4 - 1 = 3
+    EXPECT_EQ(result.getData()[1], 3); // 3 - 1 = 2
 }
 
 TEST(Test, EqualityOperator)

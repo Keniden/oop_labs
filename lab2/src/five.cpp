@@ -22,10 +22,11 @@ Five::Five(const std::initializer_list<unsigned char> &t)
     size = t.size();
     data = new unsigned char[size];
     size_t i = 0;
-    for (auto s : t)
+    for (auto it = t.end(); it != t.begin();)
     {
-        validateFive(s);
-        data[i++] = s;
+        --it;
+        validateFive(*it);
+        data[i++] = *it;
     }
 }
 
@@ -35,8 +36,7 @@ Five::Five(const std::string &t)
     data = new unsigned char[size];
     for (size_t i = 0; i < size; i++)
     {
-
-        unsigned char value = t[i] - '0';
+        unsigned char value = t[size - 1 - i] - '0';
         validateFive(value);
         data[i] = value;
     }
@@ -310,6 +310,10 @@ std::ostream &operator<<(std::ostream &os, const Five &obj)
     {
         os << static_cast<int>(obj.data[i - 1]);
     }
+    // for (size_t i = 0; i < obj.size; i++)
+    // {
+    //     os << static_cast<int>(obj.data[i]);
+    // }
     return os;
 }
 
