@@ -4,22 +4,20 @@ project(oop_lab2)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-add_executable(main main.cpp)
+add_executable(main_lab2 main.cpp)
 
 enable_testing()
 
+add_executable(tests_lab2 tests/test_five.cpp)
+
 include(FetchContent)
 FetchContent_Declare(
-  googletest
+    googletest
   URL https://github.com/google/googletest/archive/release-1.11.0.zip
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(tests tests/tests.cpp)
-
-
-target_link_libraries(tests gtest gtest_main)
+target_link_libraries(tests_lab2 gtest gtest_main)
 
 include(GoogleTest)
-gtest_discover_tests(tests)
+gtest_discover_tests(tests_lab2)

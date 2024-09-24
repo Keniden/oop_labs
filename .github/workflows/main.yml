@@ -12,6 +12,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        lab: [lab1, lab2] 
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -31,5 +35,5 @@ jobs:
         
     - name: Run Tests
       run: |
-        cd build/lab1
+        cd build/${{ matrix.lab }}
         ctest

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-    #include "src/Remove_vowel.cpp"
+#include "src/Remove_vowel.cpp"
 using namespace std;
 
 int main()
