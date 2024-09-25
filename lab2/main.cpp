@@ -54,13 +54,5 @@ int main()
         std::cout << "Exception: " << e.what() << std::endl;
     }
 
-    std::cout << "Number for new object Five";
-    std::string userInput;
-    std::cin >> userInput;
-    Five userFive(userInput);
-
-    Five result = five3 + userFive;
-    std::cout << "five3 + new Number: " << result << std::endl;
-
     return 0;
 }
