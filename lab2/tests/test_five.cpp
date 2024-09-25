@@ -1,106 +1,180 @@
 #include <gtest/gtest.h>
+#include <stdexcept>
 #include "../src/five.cpp"
 
-TEST(Test, DefaultConstructor)
+TEST(FiveTest, DefaultConstructor)
 {
-    Five five;
 
-    size_t size = five.getSize();
-    unsigned char *data = five.getData();
+    Five numberDefault;
 
-    EXPECT_EQ(size, 0);
-    EXPECT_EQ(data, nullptr);
+    ASSERT_EQ(numberDefault.getSize(), 0);
+    ASSERT_EQ(numberDefault.getData(), nullptr);
 }
 
-TEST(Test, ConstructorWithInitializerList)
+TEST(FiveTest, IncorrectDigitConstructor)
 {
-    Five five = {1, 2, 3};
 
-    size_t size = five.getSize();
-    unsigned char *data = five.getData();
-
-    EXPECT_EQ(size, 3);
-    EXPECT_EQ(data[0], 3);
-    EXPECT_EQ(data[1], 2);
-    EXPECT_EQ(data[2], 1);
+    EXPECT_THROW(Five number(1, '5'), std::invalid_argument);
+    EXPECT_THROW(Five number(1, 'a'), std::invalid_argument);
 }
 
-TEST(Test, ConstructorWithString)
+TEST(FiveTest, IncorrectLengthConstructor)
 {
-    std::string value = "123";
 
-    Five five(value);
-
-    EXPECT_EQ(five.getSize(), 3);
-    EXPECT_EQ(five.getData()[0], 3);
-    EXPECT_EQ(five.getData()[1], 2);
-    EXPECT_EQ(five.getData()[2], 1);
+    EXPECT_THROW(Five number(0, '0'), std::invalid_argument);
 }
 
-TEST(Test, CopyConstructor)
+TEST(FiveTest, InitListConstructor)
 {
-    Five five1 = {1, 2, 3};
 
-    Five five2 = five1;
+    Five expected{3, 3, 3};
 
-    EXPECT_EQ(five2.getSize(), five1.getSize());
-    EXPECT_EQ(five2.getData()[0], five1.getData()[0]);
+    Five number{3, 3, 3};
+
+    ASSERT_TRUE(number == expected);
 }
 
-TEST(Test, MoveConstructor)
+TEST(FiveTest, IncorrectDigitInitListConstructor)
 {
-    Five five1 = {1, 2, 3};
 
-    Five five2 = std::move(five1);
-
-    EXPECT_EQ(five2.getSize(), 3);
-    EXPECT_EQ(five1.getSize(), 0);
+    EXPECT_THROW(Five({'5'}), std::invalid_argument);
+    EXPECT_THROW(Five({'1', '2', '6', '0'}), std::invalid_argument);
+    EXPECT_THROW(Five({'1', '5', '3', '0', '4'}), std::invalid_argument);
 }
 
-TEST(Test, AdditionOperator)
+TEST(FiveTest, StringConstructor)
 {
-    Five five1 = {2, 3, 4};
-    Five five2 = {1, 1};
-    Five result = five1 + five2;
 
-    EXPECT_EQ(result.getSize(), 3);
-    EXPECT_EQ(result.getData()[0], 0);
-    EXPECT_EQ(result.getData()[1], 0);
-    EXPECT_EQ(result.getData()[2], 3);
+    Five expected{3, 2, 2};
+
+    Five number("322");
+
+    ASSERT_TRUE(number == expected);
 }
 
-TEST(Test, SubtractionOperator)
+TEST(FiveTest, IncorrectDigitStringConstructor)
 {
 
-    Five five1 = {4, 3};
-    Five five2 = {1, 1};
-
-    Five result = five1 - five2;
-
-    EXPECT_EQ(result.getSize(), 2);
-    EXPECT_EQ(result.getData()[0], 2); // 4 - 1 = 3
-    EXPECT_EQ(result.getData()[1], 3); // 3 - 1 = 2
+    EXPECT_THROW(Five("5"), std::invalid_argument);
+    EXPECT_THROW(Five("1260"), std::invalid_argument);
+    EXPECT_THROW(Five("15304"), std::invalid_argument);
 }
 
-TEST(Test, EqualityOperator)
+TEST(FiveTest, CopyConstructor)
 {
-    Five five1 = {1, 2, 3};
-    Five five2 = {1, 2, 3};
 
-    EXPECT_TRUE(five1 == five2);
+    Five number1("1234");
+
+    Five number2{number1};
+
+    ASSERT_TRUE(number1 == number2);
 }
 
-TEST(Test, LessThanOperator)
+TEST(FiveTest, MoveConstructor)
 {
-    Five five1 = {1, 2};
-    Five five2 = {1, 3};
 
-    EXPECT_TRUE(five1 < five2);
+    Five numberOriginal("12341");
+    Five expected{numberOriginal};
+
+    Five number{std::move(numberOriginal)};
+
+    ASSERT_TRUE(number == expected);
+    ASSERT_TRUE(numberOriginal.getSize() == 0);
 }
 
-TEST(Test, InvalidDigitThrows)
+TEST(FiveTest, AssignmentOperator)
 {
-    EXPECT_THROW(Five five({5}), std::invalid_argument);
+
+    Five number2("32222");
+
+    Five number1;
+    number1 = number2;
+
+    ASSERT_TRUE(number1 == number2);
+}
+
+TEST(FiveTest, ComparisonOperators)
+{
+
+    Five number1({2, 3});
+    Five number2({2, 3});
+    Five number3({2, 1});
+
+    ASSERT_FALSE(number1 < number2);
+    ASSERT_FALSE(number1 > number2);
+    ASSERT_FALSE(number1 < number3);
+    ASSERT_TRUE(number1 > number3);
+    ASSERT_TRUE(number1 == number2);
+    ASSERT_FALSE(number1 == number3);
+}
+
+TEST(FiveTest, AddZero)
+{
+
+    Five number1("1234");
+    Five number1Copy{number1};
+    Five numberZero;
+
+    number1 += numberZero;
+
+    ASSERT_TRUE(number1 == number1Copy);
+}
+
+TEST(FiveTest, Add)
+{
+
+    Five number1("1023");
+    Five number2("31");
+    Five expected("1104");
+
+    number1 += number2;
+
+    ASSERT_TRUE(number1 == expected);
+}
+
+TEST(FiveTest, AddExtend)
+{
+
+    Five number1("44444");
+    Five number2("1");
+    Five expected("100000");
+
+    number1 += number2;
+
+    ASSERT_TRUE(number1 == expected);
+}
+
+TEST(FiveTest, SubZero)
+{
+
+    Five number1("1234");
+    Five number1Copy{number1};
+    Five numberZero;
+
+    number1 -= numberZero;
+
+    ASSERT_TRUE(number1 == number1Copy);
+}
+
+TEST(FiveTest, Sub)
+{
+
+    Five number1("1044");
+    Five number2("31");
+    Five expected("1013");
+
+    number1 -= number2;
+
+    ASSERT_TRUE(number1 == expected);
+}
+
+TEST(FiveTest, SubstructionError)
+{
+
+    Five number1("234");
+    Five number2("12334");
+
+    EXPECT_THROW(number1 -= number2, std::logic_error);
 }
 
 int main(int argc, char **argv)
