@@ -40,4 +40,4 @@ public:
 
 #include "Pentagon.tpp"
 
-#endif // PENTAGON_HPP
+#endif

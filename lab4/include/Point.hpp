@@ -34,4 +34,4 @@ public:
 
 #include "Point.tpp"
 
-#endif // POINT_HPP
+#endif 

@@ -17,4 +17,4 @@ public:
     virtual operator double() const = 0;
 };
 
-#endif // FIGURE_HPP
+#endif

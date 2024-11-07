@@ -40,4 +40,4 @@ public:
 
 #include "Octagon.tpp"
 
-#endif // OCTAGON_HPP
+#endif

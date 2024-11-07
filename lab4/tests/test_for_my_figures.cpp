@@ -1,4 +1,3 @@
-// tests.cpp
 #include <gtest/gtest.h>
 #include "Array.hpp"
 #include "Pentagon.hpp"

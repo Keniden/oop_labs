@@ -40,4 +40,4 @@ public:
 
 #include "Hexagon.tpp"
 
-#endif // HEXAGON_HPP
+#endif
