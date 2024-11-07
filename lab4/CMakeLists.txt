@@ -6,10 +6,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(include)
 
-cmake_policy(SET CMP0135 NEW)
+add_library(figures_lab4
+    src/Point.cpp
+    src/Pentagon.cpp
+    src/Hexagon.cpp
+    src/Octagon.cpp
+    src/Array.cpp
+)
 
-add_library(figures_lab4 INTERFACE)
-target_include_directories(figures_lab4 INTERFACE include)
+target_include_directories(figures_lab4 PUBLIC include)
 
 add_executable(main_lab4 main.cpp)
 target_link_libraries(main_lab4 figures_lab4)
@@ -20,7 +25,6 @@ include(FetchContent)
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/release-1.11.0.zip
-    DOWNLOAD_EXTRACT_TIMESTAMP TRUE 
 )
 FetchContent_MakeAvailable(googletest)
 

@@ -1,189 +1,139 @@
-#include "../include/Octagon.h"
-#include <cmath>
-#include <typeinfo>
+#include "Octagon.h"
 #include <iostream>
-#include <utility>
+#include <cmath>
 
-Octagon::Octagon()
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        vertices[i] = {0.0, 0.0};
+template <Scalar T>
+Octagon<T>::Octagon() {
+    for (auto& vertex : vertices) {
+        vertex = std::make_unique<Point<T>>();
     }
 }
 
-Octagon::Octagon(const std::pair<double, double> verts[8])
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        vertices[i] = verts[i];
-    }
-    if (!isRegular())
-    {
-        std::cerr << "cоздан неправильный восьмиугольник.\n";
+template <Scalar T>
+Octagon<T>::Octagon(const std::array<Point<T>, 8>& points) {
+    for (size_t i = 0; i < 8; ++i) {
+        vertices[i] = std::make_unique<Point<T>>(points[i]);
     }
 }
 
-Octagon::Octagon(const Octagon &other)
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        vertices[i] = other.vertices[i];
+template <Scalar T>
+Octagon<T>::Octagon(const Octagon& other) {
+    for (size_t i = 0; i < 8; ++i) {
+        vertices[i] = std::make_unique<Point<T>>(*(other.vertices[i]));
     }
 }
 
-Octagon::Octagon(Octagon &&other) noexcept
-{
-    for (int i = 0; i < 8; ++i)
-    {
+template <Scalar T>
+Octagon<T>::Octagon(Octagon&& other) noexcept {
+    for (size_t i = 0; i < 8; ++i) {
         vertices[i] = std::move(other.vertices[i]);
     }
 }
 
-Octagon::~Octagon() {}
-
-Octagon &Octagon::operator=(const Octagon &other)
-{
-    if (this != &other)
-    {
-        for (int i = 0; i < 8; ++i)
-        {
-            vertices[i] = other.vertices[i];
+template <Scalar T>
+Octagon<T>& Octagon<T>::operator=(const Octagon& other) {
+    if (this != &other) {
+        for (size_t i = 0; i < 8; ++i) {
+            vertices[i] = std::make_unique<Point<T>>(*(other.vertices[i]));
         }
     }
     return *this;
 }
 
-Octagon &Octagon::operator=(Octagon &&other) noexcept
-{
-    if (this != &other)
-    {
-        for (int i = 0; i < 8; ++i)
-        {
+template <Scalar T>
+Octagon<T>& Octagon<T>::operator=(Octagon&& other) noexcept {
+    if (this != &other) {
+        for (size_t i = 0; i < 8; ++i) {
             vertices[i] = std::move(other.vertices[i]);
         }
     }
     return *this;
 }
 
-Figure &Octagon::operator=(const Figure &other)
-{
-    if (this != &other)
-    {
-        if (typeid(*this) == typeid(other))
-        {
-            const Octagon &octagon = dynamic_cast<const Octagon &>(other);
-            *this = octagon;
-        }
-        else
-        {
-            std::cerr << "типы не совпадают\n";
-        }
+template <Scalar T>
+void Octagon<T>::Print() const {
+    std::cout << "Octagon vertices:\n";
+    for (const auto& vertex : vertices) {
+        std::cout << *vertex << "\n";
     }
-    return *this;
 }
 
-bool Octagon::operator==(const Octagon &other) const
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        if (vertices[i] != other.vertices[i])
-        {
+template <Scalar T>
+double Octagon<T>::Area() const {
+    double area = 0.0;
+    for (size_t i = 0; i < 8; ++i) {
+        T x1 = vertices[i]->x;
+        T y1 = vertices[i]->y;
+        T x2 = vertices[(i + 1) % 8]->x;
+        T y2 = vertices[(i + 1) % 8]->y;
+        area += static_cast<double>(x1 * y2 - x2 * y1);
+    }
+    return std::abs(area) / 2.0;
+}
+
+template <Scalar T>
+Point<T> Octagon<T>::Center() const {
+    T x_sum = 0;
+    T y_sum = 0;
+    for (const auto& vertex : vertices) {
+        x_sum += vertex->x;
+        y_sum += vertex->y;
+    }
+    return Point<T>(x_sum / 8, y_sum / 8);
+}
+
+template <Scalar T>
+bool Octagon<T>::operator==(const Octagon<T>& other) const {
+    for (size_t i = 0; i < 8; ++i) {
+        if (*(this->vertices[i]) != *(other.vertices[i])) {
             return false;
         }
     }
     return true;
 }
 
-bool Octagon::operator==(const Figure &other) const
-{
-    if (typeid(*this) != typeid(other))
-    {
-        return false;
+template <Scalar T>
+bool Octagon<T>::operator==(const Figure<T>& other) const {
+    const Octagon<T>* oct = dynamic_cast<const Octagon<T>*>(&other);
+    if (!oct) return false;
+    return *this == *oct;
+}
+
+template <Scalar T>
+Octagon<T>::operator double() const {
+    return Area();
+}
+
+template <Scalar T>
+std::shared_ptr<Figure<T>> Octagon<T>::Clone() const {
+    return std::make_shared<Octagon<T>>(*this);
+}
+
+template <Scalar T>
+std::istream& operator>>(std::istream& is, Octagon<T>& o) {
+    for (auto& vertex : o.vertices) {
+        vertex = std::make_unique<Point<T>>();
+        is >> *(vertex);
     }
-    const Octagon &octagon = dynamic_cast<const Octagon &>(other);
-    return *this == octagon;
+    return is;
 }
 
-bool Octagon::isRegular(double epsilon) const
-{
-    double side_length = 0.0;
-    for (int i = 0; i < 8; ++i)
-    {
-        int j = (i + 1) % 8;
-        double nx = vertices[j].first - vertices[i].first;
-        double ny = vertices[j].second - vertices[i].second;
-        double length = std::sqrt(nx * nx + ny * ny);
-        if (i == 0)
-        {
-            side_length = length;
-        }
-        else
-        {
-            if (std::abs(length - side_length) > epsilon)
-                return false;
-        }
-    }
-    return true;
-}
-
-void Octagon::Print() const
-{
-    std::cout << "вершины:\n";
-    for (int i = 0; i < 8; ++i)
-    {
-        std::cout << "(" << vertices[i].first << ", " << vertices[i].second << ")\n";
-    }
-}
-
-double Octagon::Area() const
-{
-    double area = 0.0;
-    for (int i = 0; i < 8; ++i)
-    {
-        const auto &[x1, y1] = vertices[i];
-        const auto &[x2, y2] = vertices[(i + 1) % 8];
-        area += (x1 * y2 - x2 * y1);
-    }
-    return std::abs(area) / 2.0;
-}
-
-std::pair<double, double> Octagon::Center() const
-{
-    double x_sum = 0.0;
-    double y_sum = 0.0;
-    for (int i = 0; i < 8; ++i)
-    {
-        x_sum += vertices[i].first;
-        y_sum += vertices[i].second;
-    }
-    return {x_sum / 8, y_sum / 8};
-}
-
-Octagon::operator double() const
-{
-    return this->Area();
-}
-
-Figure *Octagon::Clone() const
-{
-    return new Octagon(*this);
-}
-
-std::ostream &operator<<(std::ostream &os, const Octagon &o)
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        os << o.vertices[i].first << " " << o.vertices[i].second << " ";
+template <Scalar T>
+std::ostream& operator<<(std::ostream& os, const Octagon<T>& o) {
+    for (const auto& vertex : o.vertices) {
+        os << *vertex << " ";
     }
     return os;
 }
 
-std::istream &operator>>(std::istream &is, Octagon &o)
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        is >> o.vertices[i].first >> o.vertices[i].second;
-    }
-    return is;
-}
+template class Octagon<int>;
+template class Octagon<float>;
+template class Octagon<double>;
+
+template std::istream& operator>>(std::istream& is, Octagon<int>& o);
+template std::istream& operator>>(std::istream& is, Octagon<float>& o);
+template std::istream& operator>>(std::istream& is, Octagon<double>& o);
+
+template std::ostream& operator<<(std::ostream& os, const Octagon<int>& o);
+template std::ostream& operator<<(std::ostream& os, const Octagon<float>& o);
+template std::ostream& operator<<(std::ostream& os, const Octagon<double>& o);

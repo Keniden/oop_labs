@@ -1,146 +1,113 @@
-#include "../include/Array.h"
-#include <iostream>
+#include "Array.h"
+#include "Figure.h"
 
-Array::Array() : data(nullptr), capacity(0), size(0) {}
+template <class T>
+Array<T>::Array() : data(nullptr), capacity(0), size(0) {}
 
-Array::Array(const Array &other) : capacity(other.capacity), size(other.size)
-{
-    data = new Figure *[capacity];
-    for (size_t i = 0; i < size; ++i)
-    {
-        data[i] = other.data[i]->Clone();
+template <class T>
+Array<T>::Array(const Array& other) : capacity(other.capacity), size(other.size) {
+    data = std::shared_ptr<T[]>(new T[capacity], std::default_delete<T[]>());
+    for (size_t i = 0; i < size; ++i) {
+        data[i] = other.data[i];
     }
 }
 
-Array::Array(Array &&other) noexcept
-    : data(other.data), capacity(other.capacity), size(other.size)
-{
-    other.data = nullptr;
+template <class T>
+Array<T>::Array(Array&& other) noexcept : data(std::move(other.data)), capacity(other.capacity), size(other.size) {
     other.capacity = 0;
     other.size = 0;
 }
 
-Array::~Array()
-{
-    for (size_t i = 0; i < size; ++i)
-    {
-        delete data[i];
-    }
-    delete[] data;
-}
-
-Array &Array::operator=(const Array &other)
-{
-    if (this != &other)
-    {
-        for (size_t i = 0; i < size; ++i)
-        {
-            delete data[i];
-        }
-        delete[] data;
-
+template <class T>
+Array<T>& Array<T>::operator=(const Array& other) {
+    if (this != &other) {
+        data = std::shared_ptr<T[]>(new T[other.capacity], std::default_delete<T[]>());
         capacity = other.capacity;
         size = other.size;
-        data = new Figure *[capacity];
-        for (size_t i = 0; i < size; ++i)
-        {
-            data[i] = other.data[i]->Clone(); 
+        for (size_t i = 0; i < size; ++i) {
+            data[i] = other.data[i];
         }
     }
     return *this;
 }
 
-Array &Array::operator=(Array &&other) noexcept
-{
-    if (this != &other)
-    {
-        for (size_t i = 0; i < size; ++i)
-        {
-            delete data[i];
-        }
-        delete[] data;
-
-        data = other.data;
+template <class T>
+Array<T>& Array<T>::operator=(Array&& other) noexcept {
+    if (this != &other) {
+        data = std::move(other.data);
         capacity = other.capacity;
         size = other.size;
-
-        other.data = nullptr;
         other.capacity = 0;
         other.size = 0;
     }
     return *this;
 }
 
-void Array::resize(size_t new_capacity)
-{
-    Figure **new_data = new Figure *[new_capacity];
-    for (size_t i = 0; i < size; ++i)
-    {
-        new_data[i] = data[i];
+template <class T>
+void Array<T>::resize(size_t new_capacity) {
+    std::shared_ptr<T[]> new_data(new T[new_capacity], std::default_delete<T[]>());
+    for (size_t i = 0; i < size; ++i) {
+        new_data[i] = std::move(data[i]);
     }
-    delete[] data;
     data = new_data;
     capacity = new_capacity;
 }
 
-void Array::push_back(Figure *figure)
-{
-    if (size == capacity)
-    {
+template <class T>
+void Array<T>::push_back(const T& element) {
+    if (size == capacity) {
         size_t new_capacity = (capacity == 0) ? 1 : capacity * 2;
         resize(new_capacity);
     }
-    data[size++] = figure;
+    data[size++] = element;
 }
 
-void Array::removeAt(size_t index)
-{
-    if (index >= size)
-    {
-        std::cerr << "неправильный индекс\n";
-        return;
+template <class T>
+void Array<T>::removeAt(size_t index) {
+    if (index >= size) {
+        throw std::out_of_range("Invalid index");
     }
-    delete data[index];
-    for (size_t i = index; i < size - 1; ++i)
-    {
-        data[i] = data[i + 1];
+    for (size_t i = index; i < size - 1; ++i) {
+        data[i] = std::move(data[i + 1]);
     }
     --size;
 }
 
-Figure *Array::operator[](size_t index) const
-{
-    if (index >= size)
-    {
-        std::cerr << "неправильный индекс\n";
-        return nullptr;
+template <class T>
+T& Array<T>::operator[](size_t index) const {
+    if (index >= size) {
+        throw std::out_of_range("Invalid index");
     }
     return data[index];
 }
 
-size_t Array::getSize() const
-{
+template <class T>
+size_t Array<T>::getSize() const {
     return size;
 }
 
-double Array::totalArea() const
-{
-    double total = 0.0;
-    for (size_t i = 0; i < size; ++i)
-    {
-        total += data[i]->Area();
-    }
-    return total;
+template <class T>
+T* Array<T>::begin() const {
+    return data.get();
 }
 
-void Array::printAll() const
-{
-    for (size_t i = 0; i < size; ++i)
-    {
-        std::cout << "Figure #" << i << ":\n";
-        data[i]->Print();
-        auto center = data[i]->Center();
-        std::cout << "Center: (" << center.first << ", " << center.second << ")\n";
-        std::cout << "Area: " << data[i]->Area() << "\n";
-    }
+template <class T>
+T* Array<T>::end() const {
+    return data.get() + size;
 }
+
+template class Array<std::shared_ptr<Figure<int>>>;
+template class Array<std::shared_ptr<Figure<float>>>;
+template class Array<std::shared_ptr<Figure<double>>>;
+
+template class Array<Pentagon<int>>;
+template class Array<Pentagon<float>>;
+template class Array<Pentagon<double>>;
+
+template class Array<Hexagon<int>>;
+template class Array<Hexagon<float>>;
+template class Array<Hexagon<double>>;
+
+template class Array<Octagon<int>>;
+template class Array<Octagon<float>>;
+template class Array<Octagon<double>>;
