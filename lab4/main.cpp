@@ -1,7 +1,7 @@
-#include "Array.h"
-#include "Pentagon.h"
-#include "Hexagon.h"
-#include "Octagon.h"
+#include "Array.hpp"
+#include "Pentagon.hpp"
+#include "Hexagon.hpp"
+#include "Octagon.hpp"
 #include <iostream>
 #include <memory>
 #include <cmath>
@@ -9,44 +9,44 @@
 int main() {
     Array<std::shared_ptr<Figure<int>>> figures;
 
-    std::cout << "Enter the coordinates of the pentagon vertices (5 pairs of integers):\n";
+    std::cout << "Введите координаты вершин пятиугольника (5 пар целых чисел):\n";
     Pentagon<int> pentagon;
     std::cin >> pentagon;
 
     figures.push_back(std::make_shared<Pentagon<int>>(pentagon));
 
-    std::cout << "Enter the coordinates of the hexagon vertices (6 pairs of integers):\n";
+    std::cout << "Введите координаты вершин шестиугольника (6 пар целых чисел):\n";
     Hexagon<int> hexagon;
     std::cin >> hexagon;
 
     figures.push_back(std::make_shared<Hexagon<int>>(hexagon));
 
-    std::cout << "Enter the coordinates of the octagon vertices (8 pairs of integers):\n";
+    std::cout << "Введите координаты вершин восьмиугольника (8 пар целых чисел):\n";
     Octagon<int> octagon;
     std::cin >> octagon;
 
     figures.push_back(std::make_shared<Octagon<int>>(octagon));
 
-    std::cout << "\nFigure information:\n";
+    std::cout << "\nИнформация о фигурах:\n";
     for (const auto& fig : figures) {
         fig->Print();
-        std::cout << "Area: " << fig->Area() << "\n";
-        std::cout << "Center: " << fig->Center() << "\n\n";
+        std::cout << "Площадь: " << fig->Area() << "\n";
+        std::cout << "Центр: " << fig->Center() << "\n\n";
     }
 
     double total_area = 0.0;
     for (const auto& fig : figures) {
         total_area += static_cast<double>(*fig);
     }
-    std::cout << "Total area of figures: " << total_area << "\n";
+    std::cout << "Суммарная площадь фигур: " << total_area << "\n";
 
     figures.removeAt(1);
 
-    std::cout << "\nAfter removing the second figure:\n";
+    std::cout << "\nПосле удаления второй фигуры:\n";
     for (const auto& fig : figures) {
         fig->Print();
-        std::cout << "Area: " << fig->Area() << "\n";
-        std::cout << "Center: " << fig->Center() << "\n\n";
+        std::cout << "Площадь: " << fig->Area() << "\n";
+        std::cout << "Центр: " << fig->Center() << "\n\n";
     }
 
     Array<Hexagon<double>> hex_array;
@@ -63,11 +63,11 @@ int main() {
     Hexagon<double> hex_double(hex_points);
     hex_array.push_back(hex_double);
 
-    std::cout << "\nHexagon<double> array:\n";
+    std::cout << "\nМассив Hexagon<double>:\n";
     for (const auto& hex : hex_array) {
         hex.Print();
-        std::cout << "Area: " << hex.Area() << "\n";
-        std::cout << "Center: " << hex.Center() << "\n\n";
+        std::cout << "Площадь: " << hex.Area() << "\n";
+        std::cout << "Центр: " << hex.Center() << "\n\n";
     }
 
     Array<Pentagon<float>> pent_array;
@@ -83,11 +83,11 @@ int main() {
     Pentagon<float> pent_float(pent_points);
     pent_array.push_back(pent_float);
 
-    std::cout << "\nPentagon<float> array:\n";
+    std::cout << "\nМассив Pentagon<float>:\n";
     for (const auto& pent : pent_array) {
         pent.Print();
-        std::cout << "Area: " << pent.Area() << "\n";
-        std::cout << "Center: " << pent.Center() << "\n\n";
+        std::cout << "Площадь: " << pent.Area() << "\n";
+        std::cout << "Центр: " << pent.Center() << "\n\n";
     }
 
     return 0;

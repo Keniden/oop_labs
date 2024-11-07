@@ -1,9 +1,9 @@
 // tests.cpp
 #include <gtest/gtest.h>
-#include "Array.h"
-#include "Pentagon.h"
-#include "Hexagon.h"
-#include "Octagon.h"
+#include "Array.hpp"
+#include "Pentagon.hpp"
+#include "Hexagon.hpp"
+#include "Octagon.hpp"
 #include <cmath>
 #include <memory>
 
