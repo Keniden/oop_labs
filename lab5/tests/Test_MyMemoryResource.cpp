@@ -1,340 +1,124 @@
-// // tests.cpp
-// #include <gtest/gtest.h>
-// #include "Array.hpp"
-// #include "Pentagon.hpp"
-// #include "Hexagon.hpp"
-// #include "Octagon.hpp"
-// #include <cmath>
-// #include <memory>
+#include <gtest/gtest.h>
+#include "MyMemoryResource.hpp"
+#include "../src/MyMemoryResource.cpp"
+#include "MyVector.hpp"
+#include <string>
 
-// TEST(PentagonTest, AreaCalculation) {
-//     std::array<Point<double>, 5> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     Pentagon<double> pentagon(vertices);
 
-//     double area = pentagon.Area();
-//     double expected_area = 2.37764;
+TEST(MyVectorTest, PushBackInt) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<int> alloc_int(&memory_resource);
+    MyVector<int> vec_int(alloc_int);
+    int value1 = 10;
+    int value2 = 20;
 
-//     EXPECT_NEAR(area, expected_area, 0.0001);
-// }
+    vec_int.push_back(value1);
+    vec_int.push_back(value2);
 
-// TEST(PentagonTest, CenterCalculation) {
-//     std::array<Point<double>, 5> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     Pentagon<double> pentagon(vertices);
+    ASSERT_EQ(vec_int.size(), 2);
+    EXPECT_EQ(vec_int[0], value1);
+    EXPECT_EQ(vec_int[1], value2);
+}
 
-//     auto center = pentagon.Center();
+TEST(MyVectorTest, PopBackInt) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<int> alloc_int(&memory_resource);
+    MyVector<int> vec_int(alloc_int);
+    vec_int.push_back(10);
+    vec_int.push_back(20);
 
-//     EXPECT_NEAR(center.x, 0.0, 0.0001);
-//     EXPECT_NEAR(center.y, 0.0, 0.0001);
-// }
+    vec_int.pop_back();
 
-// TEST(PentagonTest, CopyConstructor) {
-//     std::array<Point<double>, 5> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     Pentagon<double> pentagon1(vertices);
-//     Pentagon<double> pentagon2(pentagon1);
+    ASSERT_EQ(vec_int.size(), 1);
+    EXPECT_EQ(vec_int[0], 10);
+}
 
-//     EXPECT_TRUE(pentagon1 == pentagon2);
-// }
+TEST(MyVectorTest, PushBackString) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<std::string> alloc_str(&memory_resource);
+    MyVector<std::string> vec_str(alloc_str);
+    std::string str1 = "Hello";
+    std::string str2 = "World";
 
-// TEST(PentagonTest, AssignmentOperator) {
-//     std::array<Point<double>, 5> vertices1 = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     std::array<Point<double>, 5> vertices2 = {
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565),
-//         Point<double>(1.0, 0.0)
-//     };
-//     Pentagon<double> pentagon1(vertices1);
-//     Pentagon<double> pentagon2(vertices2);
+    vec_str.push_back(str1);
+    vec_str.push_back(str2);
 
-//     pentagon2 = pentagon1;
+    ASSERT_EQ(vec_str.size(), 2);
+    EXPECT_EQ(vec_str[0], str1);
+    EXPECT_EQ(vec_str[1], str2);
+}
 
-//     EXPECT_TRUE(pentagon1 == pentagon2);
-// }
+TEST(MyVectorTest, IteratorTestInt) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<int> alloc_int(&memory_resource);
+    MyVector<int> vec_int(alloc_int);
+    vec_int.push_back(1);
+    vec_int.push_back(2);
+    vec_int.push_back(3);
 
-// TEST(HexagonTest, AreaCalculation) {
-//     std::array<Point<double>, 6> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.5, 0.8660254),
-//         Point<double>(-0.5, 0.8660254),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.5, -0.8660254),
-//         Point<double>(0.5, -0.8660254)
-//     };
-//     Hexagon<double> hexagon(vertices);
+    int expected_value = 1;
+    for (auto it = vec_int.begin(); it != vec_int.end(); ++it) {
+        EXPECT_EQ(*it, expected_value++);
+    }
+}
 
-//     double area = hexagon.Area();
-//     double expected_area = 2.59808;
+TEST(MyVectorTest, CapacityIncrease) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<int> alloc_int(&memory_resource);
+    MyVector<int> vec_int(alloc_int);
+    int initial_capacity = vec_int.capacity();
 
-//     EXPECT_NEAR(area, expected_area, 0.0001);
-// }
+    for (int i = 0; i < 100; ++i) {
+        vec_int.push_back(i);
+    }
 
-// TEST(HexagonTest, CenterCalculation) {
-//     std::array<Point<double>, 6> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.5, 0.8660254),
-//         Point<double>(-0.5, 0.8660254),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.5, -0.8660254),
-//         Point<double>(0.5, -0.8660254)
-//     };
-//     Hexagon<double> hexagon(vertices);
+    EXPECT_GE(vec_int.capacity(), 100);
+    EXPECT_EQ(vec_int.size(), 100);
+    for (int i = 0; i < 100; ++i) {
+        EXPECT_EQ(vec_int[i], i);
+    }
+}
 
-//     auto center = hexagon.Center();
+TEST(MyVectorTest, EmptyVector) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<int> alloc_int(&memory_resource);
+    MyVector<int> vec_int(alloc_int);
 
-//     EXPECT_NEAR(center.x, 0.0, 0.0001);
-//     EXPECT_NEAR(center.y, 0.0, 0.0001);
-// }
+    EXPECT_TRUE(vec_int.empty());
+    EXPECT_EQ(vec_int.size(), 0);
 
-// TEST(HexagonTest, CopyConstructor) {
-//     std::array<Point<double>, 6> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.5, 0.8660254),
-//         Point<double>(-0.5, 0.8660254),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.5, -0.8660254),
-//         Point<double>(0.5, -0.8660254)
-//     };
-//     Hexagon<double> hexagon1(vertices);
-//     Hexagon<double> hexagon2(hexagon1);
+    vec_int.push_back(10);
 
-//     EXPECT_TRUE(hexagon1 == hexagon2);
-// }
+    EXPECT_FALSE(vec_int.empty());
+    EXPECT_EQ(vec_int.size(), 1);
+}
 
-// TEST(HexagonTest, AssignmentOperator) {
-//     std::array<Point<double>, 6> vertices1 = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.5, 0.8660254),
-//         Point<double>(-0.5, 0.8660254),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.5, -0.8660254),
-//         Point<double>(0.5, -0.8660254)
-//     };
-//     std::array<Point<double>, 6> vertices2 = {
-//         Point<double>(0.5, 0.8660254),
-//         Point<double>(-0.5, 0.8660254),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.5, -0.8660254),
-//         Point<double>(0.5, -0.8660254),
-//         Point<double>(1.0, 0.0)
-//     };
-//     Hexagon<double> hexagon1(vertices1);
-//     Hexagon<double> hexagon2(vertices2);
+TEST(MyVectorTest, AccessOperator) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<std::string> alloc_str(&memory_resource);
+    MyVector<std::string> vec_str(alloc_str);
+    vec_str.push_back("Hello");
+    vec_str.push_back("World");
 
-//     hexagon2 = hexagon1;
+    EXPECT_EQ(vec_str[0], "Hello");
+    EXPECT_EQ(vec_str[1], "World");
 
-//     EXPECT_TRUE(hexagon1 == hexagon2);
-// }
+    vec_str[1] = "C++";
 
-// TEST(OctagonTest, AreaCalculation) {
-//     std::array<Point<double>, 8> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.70710678118, 0.70710678118),
-//         Point<double>(0.0, 1.0),
-//         Point<double>(-0.70710678118, 0.70710678118),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.70710678118, -0.70710678118),
-//         Point<double>(0.0, -1.0),
-//         Point<double>(0.70710678118, -0.70710678118)
-//     };
-//     Octagon<double> octagon(vertices);
+    EXPECT_EQ(vec_str[1], "C++");
+}
 
-//     double area = octagon.Area();
-//     double expected_area = 2.82843;
+TEST(MyVectorTest, PushBackDouble) {
+    MyMemoryResource memory_resource;
+    std::pmr::polymorphic_allocator<double> alloc_double(&memory_resource);
+    MyVector<double> vec_double(alloc_double);
+    double value1 = 1.234;
+    double value2 = 5.678;
 
-//     EXPECT_NEAR(area, expected_area, 0.0001);
-// }
+    vec_double.push_back(value1);
+    vec_double.push_back(value2);
 
-// TEST(OctagonTest, CenterCalculation) {
-//     std::array<Point<double>, 8> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.70710678118, 0.70710678118),
-//         Point<double>(0.0, 1.0),
-//         Point<double>(-0.70710678118, 0.70710678118),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.70710678118, -0.70710678118),
-//         Point<double>(0.0, -1.0),
-//         Point<double>(0.70710678118, -0.70710678118)
-//     };
-//     Octagon<double> octagon(vertices);
-
-//     auto center = octagon.Center();
-
-//     EXPECT_NEAR(center.x, 0.0, 0.0001);
-//     EXPECT_NEAR(center.y, 0.0, 0.0001);
-// }
-
-// TEST(OctagonTest, CopyConstructor) {
-//     std::array<Point<double>, 8> vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.70710678118, 0.70710678118),
-//         Point<double>(0.0, 1.0),
-//         Point<double>(-0.70710678118, 0.70710678118),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.70710678118, -0.70710678118),
-//         Point<double>(0.0, -1.0),
-//         Point<double>(0.70710678118, -0.70710678118)
-//     };
-//     Octagon<double> octagon1(vertices);
-//     Octagon<double> octagon2(octagon1);
-
-//     EXPECT_TRUE(octagon1 == octagon2);
-// }
-
-// TEST(OctagonTest, AssignmentOperator) {
-//     std::array<Point<double>, 8> vertices1 = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.70710678118, 0.70710678118),
-//         Point<double>(0.0, 1.0),
-//         Point<double>(-0.70710678118, 0.70710678118),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.70710678118, -0.70710678118),
-//         Point<double>(0.0, -1.0),
-//         Point<double>(0.70710678118, -0.70710678118)
-//     };
-//     std::array<Point<double>, 8> vertices2 = {
-//         Point<double>(0.70710678118, 0.70710678118),
-//         Point<double>(0.0, 1.0),
-//         Point<double>(-0.70710678118, 0.70710678118),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.70710678118, -0.70710678118),
-//         Point<double>(0.0, -1.0),
-//         Point<double>(0.70710678118, -0.70710678118),
-//         Point<double>(1.0, 0.0)
-//     };
-//     Octagon<double> octagon1(vertices1);
-//     Octagon<double> octagon2(vertices2);
-
-//     octagon2 = octagon1;
-
-//     EXPECT_TRUE(octagon1 == octagon2);
-// }
-
-// TEST(ArrayTest, RemoveFigure) {
-//     Array<std::shared_ptr<Figure<double>>> figures;
-
-//     std::array<Point<double>, 5> pent_vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     auto pentagon = std::make_shared<Pentagon<double>>(pent_vertices);
-//     figures.push_back(pentagon);
-
-//     figures.removeAt(0);
-
-//     EXPECT_EQ(figures.getSize(), 0);
-// }
-
-// TEST(ArrayTest, TotalAreaCalculation) {
-//     Array<std::shared_ptr<Figure<double>>> figures;
-
-//     std::array<Point<double>, 5> pent_vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     auto pentagon = std::make_shared<Pentagon<double>>(pent_vertices);
-
-//     std::array<Point<double>, 6> hex_vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.5, 0.8660254),
-//         Point<double>(-0.5, 0.8660254),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.5, -0.8660254),
-//         Point<double>(0.5, -0.8660254)
-//     };
-//     auto hexagon = std::make_shared<Hexagon<double>>(hex_vertices);
-
-//     std::array<Point<double>, 8> oct_vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.7071068, 0.7071068),
-//         Point<double>(0.0, 1.0),
-//         Point<double>(-0.7071068, 0.7071068),
-//         Point<double>(-1.0, 0.0),
-//         Point<double>(-0.7071068, -0.7071068),
-//         Point<double>(0.0, -1.0),
-//         Point<double>(0.7071068, -0.7071068)
-//     };
-//     auto octagon = std::make_shared<Octagon<double>>(oct_vertices);
-
-//     figures.push_back(pentagon);
-//     figures.push_back(hexagon);
-//     figures.push_back(octagon);
-
-//     double total_area = 0.0;
-//     for (const auto& fig : figures) {
-//         total_area += static_cast<double>(*fig);
-//     }
-
-//     double expected_total_area = 2.37764 + 2.59808 + 2.82843;
-//     EXPECT_NEAR(total_area, expected_total_area, 0.001);
-// }
-
-// TEST(ArrayTest, CopyConstructor) {
-//     Array<std::shared_ptr<Figure<double>>> figures;
-
-//     std::array<Point<double>, 5> pent_vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     auto pentagon = std::make_shared<Pentagon<double>>(pent_vertices);
-//     figures.push_back(pentagon);
-
-//     Array<std::shared_ptr<Figure<double>>> figures_copy(figures);
-
-//     EXPECT_EQ(figures_copy.getSize(), figures.getSize());
-//     EXPECT_TRUE(*figures_copy[0] == *figures[0]);
-// }
-
-// TEST(ArrayTest, AssignmentOperator) {
-//     Array<std::shared_ptr<Figure<double>>> figures1;
-
-//     std::array<Point<double>, 5> pent_vertices = {
-//         Point<double>(1.0, 0.0),
-//         Point<double>(0.309017, 0.9510565),
-//         Point<double>(-0.809017, 0.5877852),
-//         Point<double>(-0.809017, -0.5877852),
-//         Point<double>(0.309017, -0.9510565)
-//     };
-//     auto pentagon = std::make_shared<Pentagon<double>>(pent_vertices);
-//     figures1.push_back(pentagon);
-
-//     Array<std::shared_ptr<Figure<double>>> figures2;
-
-//     figures2 = figures1;
-
-//     EXPECT_EQ(figures2.getSize(), figures1.getSize());
-//     EXPECT_TRUE(*figures2[0] == *figures1[0]);
-// }
+    ASSERT_EQ(vec_double.size(), 2);
+    EXPECT_DOUBLE_EQ(vec_double[0], value1);
+    EXPECT_DOUBLE_EQ(vec_double[1], value2);
+}
