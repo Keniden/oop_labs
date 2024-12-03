@@ -8,6 +8,8 @@ include_directories(include)
 
 add_executable(main_lab4 main.cpp)
 
+cmake_policy(SET CMP0135 NEW)
+
 enable_testing()
 
 include(FetchContent)

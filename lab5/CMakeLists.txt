@@ -7,8 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 
 add_executable(main_lab5 main.cpp)
+cmake_policy(SET CMP0135 NEW)
+
 
 enable_testing()
+
 
 include(FetchContent)
 FetchContent_Declare(
